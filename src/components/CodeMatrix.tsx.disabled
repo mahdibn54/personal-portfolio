@@ -1,0 +1,130 @@
+import React, { useRef, useMemo } from 'react';
+import { Canvas, useFrame, extend } from '@react-three/fiber';
+import { Text, Float } from '@react-three/drei';
+import * as THREE from 'three';
+
+// Extend Three.js objects to be used as JSX elements
+extend({ 
+  Mesh: THREE.Mesh, 
+  IcosahedronGeometry: THREE.IcosahedronGeometry, 
+  MeshStandardMaterial: THREE.MeshStandardMaterial,
+  AmbientLight: THREE.AmbientLight,
+  PointLight: THREE.PointLight,
+  Fog: THREE.Fog
+});
+
+function FloatingCode({ position, text, delay = 0 }: { position: [number, number, number], text: string, delay?: number }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + delay) * 0.2;
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5 + delay) * 0.1;
+    }
+  });
+
+  return (
+    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+      <Text
+        ref={meshRef}
+        position={position}
+        fontSize={0.12}
+        color="#00ff88"
+        anchorX="center"
+        anchorY="middle"
+        font="/fonts/JetBrainsMono-Regular.woff"
+        maxWidth={2}
+      >
+        {text}
+      </Text>
+    </Float>
+  );
+}
+
+function CodeRain() {
+  const codeSnippets = useMemo(() => [
+    'const ai = new OpenAI()',
+    'Spring Boot',
+    'React.useEffect()',
+    'Docker compose up',
+    'git commit -m "feat"',
+    'SELECT * FROM users',
+    'async/await',
+    'microservices',
+    'CI/CD Pipeline',
+    'PostgreSQL',
+    'Next.js',
+    'TypeScript',
+    'Jenkins deploy',
+    'Qdrant vector DB',
+    'REST API',
+    'Keycloak auth',
+    'Django ORM',
+    'Angular 17',
+    'SonarQube',
+    'AWS Lambda'
+  ], []);
+
+  const positions = useMemo(() => 
+    Array.from({ length: 20 }, (_, i) => [
+      (Math.random() - 0.5) * 8,
+      (Math.random() - 0.5) * 6,
+      (Math.random() - 0.5) * 4
+    ] as [number, number, number]), []
+  );
+
+  return (
+    <>
+      {codeSnippets.map((snippet, i) => (
+        <FloatingCode
+          key={i}
+          position={positions[i]}
+          text={snippet}
+          delay={i * 0.3}
+        />
+      ))}
+    </>
+  );
+}
+
+function AnimatedSphere() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x = state.clock.elapsedTime * 0.2;
+      meshRef.current.rotation.y = state.clock.elapsedTime * 0.3;
+      meshRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime) * 0.1);
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} position={[0, 0, -2]}>
+      <icosahedronGeometry args={[1, 4]} />
+      <meshStandardMaterial
+        color="#ff6b35"
+        wireframe
+        transparent
+        opacity={0.3}
+      />
+    </mesh>
+  );
+}
+
+export default function CodeMatrix() {
+  return (
+    <div className="absolute inset-0 -z-10 overflow-hidden">
+      <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
+        <ambientLight intensity={0.3} />
+        <pointLight position={[10, 10, 10]} intensity={0.5} color="#00ff88" />
+        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#ff6b35" />
+        
+        <AnimatedSphere />
+        <CodeRain />
+        
+        {/* Subtle fog for depth */}
+        <fog attach="fog" args={['#000000', 3, 12]} />
+      </Canvas>
+    </div>
+  );
+}
