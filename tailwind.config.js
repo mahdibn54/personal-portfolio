@@ -10,7 +10,8 @@ module.exports = {
         accent: '#ff4d00'
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui']
+        sans: ['NB International Mono', 'JetBrains Mono', 'Inter', 'ui-sans-serif', 'system-ui'],
+        mono: ['NB International Mono', 'JetBrains Mono', 'ui-monospace', 'SFMono-Regular']
       }
     }
   },

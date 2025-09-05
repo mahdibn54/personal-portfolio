@@ -11,7 +11,7 @@ export default function ProfileHero() {
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
           className="flex justify-center mb-12">
           <div className="relative group">
             {/* Main photo container */}
@@ -42,7 +42,7 @@ export default function ProfileHero() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+          transition={{ duration: 0.4, delay: 0.1, ease: 'easeOut' }}
           className="mb-8">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-light tracking-tight leading-[0.9] mb-4 text-black">
             {t('hero.name')}
@@ -65,7 +65,8 @@ export default function ProfileHero() {
             {t('hero.email')}
           </a>
           <span className="hidden md:inline">|</span>
-          <span>{t('hero.phone')}</span>
+          <a href={`tel:${t('hero.phone')}`}
+            className="hover:text-black transition-colors duration-300">{t('hero.phone')}</a>
           <span className="hidden md:inline">|</span>
           <a 
             href="https://www.linkedin.com/in/mahdi-ben-amor"

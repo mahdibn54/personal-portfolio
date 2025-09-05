@@ -33,9 +33,9 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
         setIsComplete(true);
         setTimeout(() => {
           onComplete();
-        }, 800);
+        }, 400);
       }
-    }, 600);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [currentStep, greetings.length, onComplete]);
@@ -46,7 +46,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.8, ease: 'easeInOut' }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
           className="fixed inset-0 z-50 bg-black flex items-center justify-center"
         >
           <div className="text-center">
@@ -56,7 +56,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
                 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-tight text-white"
               >
                 {greetings[currentStep]}

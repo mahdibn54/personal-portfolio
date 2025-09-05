@@ -1,12 +1,15 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { useState } from 'react';
 import { useTranslation } from '@/context/TranslationContext';
 import { 
   FiDollarSign, 
   FiRadio, 
   FiMapPin, 
   FiShoppingBag, 
-  FiShield 
+  FiShield,
+  FiX,
+  FiExternalLink
 } from 'react-icons/fi';
 
 interface Project {
@@ -109,6 +112,7 @@ const projects: Project[] = [
 
 export default function ProjectsList() {
   const { t } = useTranslation();
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   
   const groupedProjects = domains.map(domain => ({
     ...domain,
@@ -168,11 +172,9 @@ export default function ProjectsList() {
                     transition={{ duration: 0.4, delay: projectIndex * 0.1 }}
                     viewport={{ once: true }}
                     whileHover={{ scale: 1.02, y: -4 }}>
-                    <a
-                      href={project.url ?? project.link ?? '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block overflow-hidden group border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg">
+                    <button
+                      onClick={() => setSelectedProject(project)}
+                      className="block overflow-hidden group border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg w-full text-left cursor-pointer">
                     
                     <div className="relative h-48 md:h-56 bg-gray-50">
                       <Image
@@ -189,6 +191,22 @@ export default function ProjectsList() {
                         <domain.icon size={12} className={domain.color} />
                         <span className={`text-xs font-medium ${domain.color}`}>{domain.title.split(' ')[0]}</span>
                       </div>
+                      
+                      {/* Link button on image */}
+                      {(project.url || project.link) && (
+                        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <a
+                            href={project.url ?? project.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-black/80 text-white text-xs rounded-lg hover:bg-black transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <FiExternalLink size={12} />
+                            View Live
+                          </a>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="p-6 bg-white">
@@ -196,9 +214,13 @@ export default function ProjectsList() {
                         {project.title}
                       </h4>
                       <p className="text-gray-500 text-xs uppercase tracking-wide mb-3 font-medium">{project.client}</p>
-                      <p className="text-gray-600 text-sm leading-relaxed">{project.description}</p>
+                      <p className="text-gray-600 text-sm leading-relaxed">
+                        {project.description.length > 120 
+                          ? `${project.description.substring(0, 120)}...` 
+                          : project.description}
+                      </p>
                     </div>
-                    </a>
+                    </button>
                   </motion.div>
                 ))}
               </div>
@@ -232,6 +254,121 @@ export default function ProjectsList() {
           </div>
         </motion.div>
       </div>
+
+      {/* Project Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedProject(null)}>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}>
+              
+              {/* Modal Header */}
+              <div className="relative">
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="absolute top-4 right-4 z-10 p-2 bg-white/90 hover:bg-white rounded-full transition-colors">
+                  <FiX size={20} />
+                </button>
+                
+                {/* Project Image */}
+                <div className="relative h-64 md:h-80 bg-gray-100">
+                  <Image
+                    src={selectedProject.image}
+                    alt={selectedProject.title}
+                    fill
+                    className="object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400' viewBox='0 0 800 400'%3E%3Crect width='800' height='400' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%23374151'%3E${selectedProject.title}%3C/text%3E%3C/svg%3E`;
+                    }}
+                  />
+                  
+                  {/* Link Button on Image */}
+                  {(selectedProject.url || selectedProject.link) && (
+                    <div className="absolute bottom-4 right-4">
+                      <a
+                        href={selectedProject.url ?? selectedProject.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+                        onClick={(e) => e.stopPropagation()}>
+                        <FiExternalLink size={16} />
+                        Visit Project
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Modal Content */}
+              <div className="p-6 md:p-8 max-h-96 overflow-y-auto">
+                <div className="mb-4">
+                  <p className="text-sm uppercase tracking-wide text-gray-500 mb-2 font-medium">
+                    {selectedProject.client}
+                  </p>
+                  <h2 className="text-2xl md:text-3xl font-light text-black mb-4">
+                    {selectedProject.title}
+                  </h2>
+                </div>
+                
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-medium text-black mb-3">Project Overview</h3>
+                    <p className="text-gray-700 leading-relaxed">
+                      {selectedProject.description}
+                    </p>
+                  </div>
+                  
+                  {/* Domain Badge */}
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-gray-600">Domain:</span>
+                    {domains.find(d => d.id === selectedProject.domain) && (
+                      <div className={`inline-flex items-center gap-2 px-3 py-1 ${domains.find(d => d.id === selectedProject.domain)?.bgColor} rounded-full`}>
+                        {(() => {
+                          const domain = domains.find(d => d.id === selectedProject.domain);
+                          const Icon = domain?.icon;
+                          return Icon ? <Icon size={14} className={domain.color} /> : null;
+                        })()}
+                        <span className={`text-sm font-medium ${domains.find(d => d.id === selectedProject.domain)?.color}`}>
+                          {domains.find(d => d.id === selectedProject.domain)?.title}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
+                    {(selectedProject.url || selectedProject.link) && (
+                      <a
+                        href={selectedProject.url ?? selectedProject.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
+                        <FiExternalLink size={16} />
+                        View Live Project
+                      </a>
+                    )}
+                    <button
+                      onClick={() => setSelectedProject(null)}
+                      className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
