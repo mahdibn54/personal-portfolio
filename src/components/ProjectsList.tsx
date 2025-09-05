@@ -221,7 +221,7 @@ export default function ProjectsList() {
             <div className="w-px h-8 bg-gray-200"></div>
             <div className="text-center">
               <div className="text-2xl font-light text-black">{projects.length}</div>
-              <div className="text-xs uppercase tracking-wide text-gray-500">Projects</div>
+              <div className="text-xs uppercase tracking-wide text-gray-500">Featured Projects</div>
             </div>
             <div className="w-px h-8 bg-gray-200"></div>
             <div className="text-center">

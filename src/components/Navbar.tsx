@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useTranslation } from '@/context/TranslationContext';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 
 const links = [
   { href: '#about', key: 'nav.about' },
@@ -13,6 +14,8 @@ const links = [
 
 export default function Navbar() {
   const { locale, setLocale, t } = useTranslation();
+  const [isHovered, setIsHovered] = useState(false);
+  
   return (
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
@@ -22,8 +25,40 @@ export default function Navbar() {
     >
       <div className="grid-aligned py-6">
         <div className="flex items-center justify-between col-span-12">
-          <Link href="#" className="text-xl font-light tracking-tight text-black">
-            <span>MB</span>
+          <Link 
+            href="#" 
+            className="relative text-xl font-light tracking-tight text-black block"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <div className="relative flex items-center justify-center min-w-[200px]">
+              <AnimatePresence mode="wait">
+                {!isHovered ? (
+                  <motion.div
+                    key="mb"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="flex items-center"
+                  >
+                    <span>M</span>
+                    <span>B</span>
+                  </motion.div>
+                ) : (
+                  <motion.span
+                    key="full-name"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className="whitespace-nowrap"
+                  >
+                   Mahdi Ben Amor
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </div>
           </Link>
           <ul className="hidden md:flex gap-12 text-sm uppercase tracking-widest font-light">
             {links.map(({ href, key }) => (

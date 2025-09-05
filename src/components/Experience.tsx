@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 import { useTranslation } from '@/context/TranslationContext';
-
+import { FiX, FiMapPin, FiCalendar } from 'react-icons/fi';
 import { SiSpringboot, SiPhp, SiDjango, SiDocker, SiJenkins, SiOpenai, SiPostgresql, SiPython, SiLaravel } from 'react-icons/si';
 
 interface Tech {
@@ -19,6 +20,7 @@ interface ExperienceItem {
 
 export default function Experience() {
   const { t } = useTranslation();
+  const [selectedExperience, setSelectedExperience] = useState<ExperienceItem | null>(null);
   
   const experiences = [
     {
@@ -74,39 +76,131 @@ export default function Experience() {
           {t('experience.title')}
         </h2>
       </motion.div>
-      <div className="max-w-4xl mx-auto space-y-8">
-        {experiences.map((exp) => (
+      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+        {experiences.map((exp, index) => (
           <motion.div
             key={exp.role + exp.period}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}>
-            <div className="group bg-gray-50 hover:bg-white p-8 border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all duration-300">
-            <h3 className="text-xl font-light text-black group-hover:text-gray-700 transition-colors duration-300">
-              {exp.role}
-            </h3>
-            <p className="text-gray-500 text-sm uppercase tracking-wide mb-1 font-medium">
-              {exp.company} — {exp.location}
-            </p>
-            <p className="text-xs text-gray-400 mb-6">{exp.period}</p>
-            <ul className="list-disc list-inside space-y-2 text-gray-600 text-sm leading-relaxed mb-6">
-              {exp.bullets.map((b, idx) => (
-                <li key={idx}>{b}</li>
-              ))}
-            </ul>
-            {/* Tech badges */}
-            <div className="flex flex-wrap gap-3">
-              {exp.tech.map(({ label, icon: Icon }) => (
-                <span key={label} className="inline-flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 px-3 py-1.5 text-xs font-light hover:border-gray-300 transition-colors duration-200">
-                  <Icon size={16} /> {label}
-                </span>
-              ))}
-            </div>
-            </div>
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.02, y: -4 }}>
+            <button
+              onClick={() => setSelectedExperience(exp)}
+              className="group bg-gray-50 hover:bg-white p-6 border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 w-full text-left cursor-pointer">
+              <h3 className="text-lg font-light text-black group-hover:text-gray-700 transition-colors duration-300 mb-2">
+                {exp.role}
+              </h3>
+              <p className="text-gray-500 text-sm uppercase tracking-wide mb-4 font-medium">
+                {exp.company} — {exp.location}
+              </p>
+              
+              {/* Tech badges - show first 4 */}
+              <div className="flex flex-wrap gap-2">
+                {exp.tech.slice(0, 4).map(({ label, icon: Icon }) => (
+                  <span key={label} className="inline-flex items-center gap-1.5 bg-white border border-gray-200 text-gray-700 px-2 py-1 text-xs font-light">
+                    <Icon size={14} /> {label}
+                  </span>
+                ))}
+                {exp.tech.length > 4 && (
+                  <span className="inline-flex items-center px-2 py-1 text-xs text-gray-500 bg-gray-100 border border-gray-200">
+                    +{exp.tech.length - 4} more
+                  </span>
+                )}
+              </div>
+            </button>
           </motion.div>
         ))}
       </div>
+
+      {/* Experience Modal */}
+      <AnimatePresence>
+        {selectedExperience && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedExperience(null)}>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}>
+              
+              {/* Modal Header */}
+              <div className="relative bg-gray-50 p-6 border-b border-gray-100">
+                <button
+                  onClick={() => setSelectedExperience(null)}
+                  className="absolute top-4 right-4 p-2 bg-white hover:bg-gray-100 rounded-full transition-colors">
+                  <FiX size={20} />
+                </button>
+                
+                <div className="pr-12">
+                  <h2 className="text-2xl md:text-3xl font-light text-black mb-2">
+                    {selectedExperience.role}
+                  </h2>
+                  <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{selectedExperience.company}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <FiMapPin size={14} />
+                      <span className="text-sm">{selectedExperience.location}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <FiCalendar size={14} />
+                      <span className="text-sm">{selectedExperience.period}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Modal Content */}
+              <div className="p-6 max-h-96 overflow-y-auto">
+                <div className="space-y-6">
+                  {/* Responsibilities */}
+                  <div>
+                    <h3 className="text-lg font-medium text-black mb-4">Key Responsibilities & Achievements</h3>
+                    <ul className="space-y-3">
+                      {selectedExperience.bullets.map((bullet, idx) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <div className="w-2 h-2 bg-black rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-gray-700 leading-relaxed">{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Technologies */}
+                  <div>
+                    <h3 className="text-lg font-medium text-black mb-4">Technologies & Tools</h3>
+                    <div className="flex flex-wrap gap-3">
+                      {selectedExperience.tech.map(({ label, icon: Icon }) => (
+                        <div key={label} className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+                          <Icon size={18} />
+                          <span className="font-medium">{label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Close Button */}
+                  <div className="pt-4 border-t border-gray-100">
+                    <button
+                      onClick={() => setSelectedExperience(null)}
+                      className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
