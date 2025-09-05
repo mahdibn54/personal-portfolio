@@ -7,7 +7,7 @@ const links = [
   { href: '#projects', key: 'nav.projects' },
   { href: '#skills', key: 'nav.skills' },
   { href: '#experience', key: 'nav.experience' },
-  { href: '#education', key: 'nav.education' },
+  // { href: '#education', key: 'nav.education' },
   { href: '#contact', key: 'nav.contact' },
 ];
 
