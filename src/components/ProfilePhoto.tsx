@@ -16,7 +16,7 @@ export default function ProfilePhoto() {
             src="/images/profile.jpeg" // You can replace this with your actual photo path
             alt="Mahdi Ben Amor"
             fill
-            className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+            className="object-cover transition-all duration-500"
             priority
             onError={(e) => {
               // Fallback to a placeholder if image fails to load

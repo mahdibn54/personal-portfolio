@@ -9,9 +9,9 @@ export default function ProfileHero() {
       <div className="max-w-4xl mx-auto text-center">
         {/* Profile Photo */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
           className="flex justify-center mb-12">
           <div className="relative group">
             {/* Main photo container */}
@@ -20,8 +20,10 @@ export default function ProfileHero() {
                 src="/images/profile.jpeg"
                 alt={t('hero.name')}
                 fill
-                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                className="object-cover transition-all duration-700"
                 priority
+                sizes="(max-width: 768px) 256px, 320px"
+                onLoad={() => {}}
                 onError={(e) => {
                   e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Ccircle cx='150' cy='150' r='150' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='16' fill='%23374151'%3E${t('hero.name')}%3C/text%3E%3C/svg%3E`;
                 }}

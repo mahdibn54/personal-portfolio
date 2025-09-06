@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useTranslation } from '@/context/TranslationContext';
 import { FiX, FiMapPin, FiCalendar } from 'react-icons/fi';
-import { SiSpringboot, SiPhp, SiDjango, SiDocker, SiJenkins, SiOpenai, SiPostgresql, SiPython, SiLaravel } from 'react-icons/si';
+import { SiSpringboot, SiPhp, SiDjango, SiDocker, SiJenkins, SiOpenai, SiPostgresql, SiPython, SiLaravel, SiReact, SiAngular, SiNextdotjs } from 'react-icons/si';
 
 interface Tech {
   label: string;
@@ -46,7 +46,12 @@ export default function Experience() {
       { label: 'Docker', icon: SiDocker },
       { label: 'Jenkins', icon: SiJenkins },
       { label: 'OpenAI', icon: SiOpenai },
-      { label: 'PostgreSQL', icon: SiPostgresql }
+      { label: 'PostgreSQL', icon: SiPostgresql },
+      { label: 'Python', icon: SiPython },
+      { label: 'Laravel', icon: SiLaravel },
+      { label: 'React', icon: SiReact },
+      { label: 'Angular', icon: SiAngular },
+      { label: 'Next.js', icon: SiNextdotjs },
     ]
     },
     {

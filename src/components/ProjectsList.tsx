@@ -70,43 +70,50 @@ const domains: Domain[] = [
 
 const projects: Project[] = [
   {
-    title: 'ADAPT Fund Platform',
-    client: 'Italian Agency for Development Cooperation (AICS)',
-    description: 'Led development of EU-funded digital platform for private investments in Tunisia\'s agriculture and fishing sectors. Implemented scalable architecture with auto-evaluation scoring, eligibility checks, document uploads, and multi-role workflows for hundreds of users.',
+    title: 'projects.adapt.title',
+    client: 'projects.adapt.client',
+    description: 'projects.adapt.description',
     image: '/projects/adapt.jpg',
-    domain: 'public',
+    domain: 'banking',
     url: 'https://plateforme.adapt-tunisie.org/'
   },
   {
-    title: 'Binding Information Management Platform',
-    client: 'Tunisian Customs Authority (DGD)',
-    description: 'Led development of web application to digitize Binding Information management, aligning with WTO and African trade agreements. RESTful architecture with React/Angular frontend, Spring Boot backend, supporting up to 80,000 users with electronic signatures and real-time stats.',
+    title: 'projects.mae.title',
+    client: 'projects.mae.client',
+    description: 'projects.mae.description',
+    image: '/projects/mae.jpg',
+    domain: 'banking'
+  },
+  {
+    title: 'projects.customs.title',
+    client: 'projects.customs.client',
+    description: 'projects.customs.description',
     image: '/projects/customs.jpg',
     domain: 'public',
     url: 'http://rc.douane.gov.tn/login'
   },
   {
-    title: 'National Agency for Cybersecurity Website',
-    client: 'Tunisia\'s National Agency for Cybersecurity (ANCS)',
-    description: 'Led development of multilingual (Arabic, French, English) website with cloud-based architecture. Integrated modules for content management, incident/vulnerability reporting, 2FA authentication, SEO, OWASP security, and W3C/WAI compliance.',
+    title: 'projects.ancs.title',
+    client: 'projects.ancs.client',
+    description: 'projects.ancs.description',
     image: '/projects/ancs.jpg',
     domain: 'public',
     url: 'https://www.ancs.tn'
   },
   {
-    title: 'Bazar Moris Agricultural Marketplace',
-    client: 'JSB COVID PREP Project',
-    description: 'Contributed as backend developer to Mauritius Agricultural Marketplace. Implemented real-time trading chat system and dynamic pricing system, supporting planters, retailers, wholesalers, and transformers with shop management and order processing.',
+    title: 'projects.bazar.title',
+    client: 'projects.bazar.client',
+    description: 'projects.bazar.description',
     image: '/projects/bazar.jpg',
     domain: 'retail',
     url: 'https://bazarmoris.mu/en'
   },
   {
-    title: 'Cashless Wallet System',
-    client: 'Tourism & Resort Industry',
-    description: 'Led development and business analysis for NFC card-based payment solution targeting resorts and tourism. Designed complex dashboards, revenue/history tables, event management system, and client/card management features for enhanced operational efficiency.',
+    title: 'projects.cashless.title',
+    client: 'projects.cashless.client',
+    description: 'projects.cashless.description',
     image: '/projects/cashless.jpg',
-    domain: 'retail'
+    domain: 'tourism'
   }
 ];
 
@@ -211,13 +218,13 @@ export default function ProjectsList() {
                     
                     <div className="p-6 bg-white">
                       <h4 className="text-base font-light mb-2 text-black group-hover:text-gray-700 transition-colors">
-                        {project.title}
+                        {t(project.title)}
                       </h4>
-                      <p className="text-gray-500 text-xs uppercase tracking-wide mb-3 font-medium">{project.client}</p>
+                      <p className="text-gray-500 text-xs uppercase tracking-wide mb-3 font-medium">{t(project.client)}</p>
                       <p className="text-gray-600 text-sm leading-relaxed">
-                        {project.description.length > 120 
-                          ? `${project.description.substring(0, 120)}...` 
-                          : project.description}
+                        {t(project.description).length > 120 
+                          ? `${t(project.description).substring(0, 120)}...` 
+                          : t(project.description)}
                       </p>
                     </div>
                     </button>
@@ -313,19 +320,41 @@ export default function ProjectsList() {
               <div className="p-6 md:p-8 max-h-96 overflow-y-auto">
                 <div className="mb-4">
                   <p className="text-sm uppercase tracking-wide text-gray-500 mb-2 font-medium">
-                    {selectedProject.client}
+                    {t(selectedProject.client)}
                   </p>
                   <h2 className="text-2xl md:text-3xl font-light text-black mb-4">
-                    {selectedProject.title}
+                    {t(selectedProject.title)}
                   </h2>
                 </div>
                 
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-lg font-medium text-black mb-3">Project Overview</h3>
-                    <p className="text-gray-700 leading-relaxed">
-                      {selectedProject.description}
-                    </p>
+                    <div className="text-gray-700 leading-relaxed whitespace-pre-line">
+                      {(() => {
+                        const description = t(selectedProject.description);
+                        const techStackMatch = description.match(/Technology Stack:|Stack Technologique:/);
+                        
+                        if (techStackMatch) {
+                          const splitIndex = techStackMatch.index;
+                          const mainDescription = description.substring(0, splitIndex).trim();
+                          const techStack = description.substring(splitIndex).trim();
+                          
+                          return (
+                            <>
+                              <div>{mainDescription}</div>
+                              <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                                <div className="text-blue-800 font-medium text-sm whitespace-pre-line">
+                                  {techStack}
+                                </div>
+                              </div>
+                            </>
+                          );
+                        }
+                        
+                        return description;
+                      })()}
+                    </div>
                   </div>
                   
                   {/* Domain Badge */}
